@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mana • Snigdha</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background:
+        radial-gradient(circle at 15% 90%, #ffb52e 0, transparent 30%),
+        radial-gradient(circle at 85% 20%, #8e20d4 0, transparent 35%),
+        linear-gradient(135deg, #4639d8, #d21a87 48%, #ff7a25);
+    }
+
+    .app {
+      width: min(100%, 430px);
+      height: 100vh;
+      max-height: 860px;
+      background: #fffdf7;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* TOP */
+    .topbar {
+      padding: 18px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fffdf7;
+    }
+
+    .brand {
+      font-family: Georgia, serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #4b235d;
+    }
+
+    .top-icons {
+      display: flex;
+      gap: 18px;
+      font-size: 23px;
+      color: #4b235d;
+    }
+
+    /* PROFILE */
+    .profile-card {
+      margin: 0 12px 10px;
+      padding: 13px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,.86);
+      box-shadow: 0 5px 18px rgba(90,40,100,.12);
+      border: 1px solid rgba(120,70,130,.08);
+    }
+
+    .avatar-ring {
+      width: 54px;
+      height: 54px;
+      padding: 2px;
+      border-radius: 50%;
+      background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffe8dc;
+      font-size: 27px;
+    }
+
+    .person {
+      flex: 1;
+    }
+
+    .person-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #3b2840;
+    }
+
+    .status {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .status.online {
+      color: #4caa65;
+    }
+
+    .info {
+      width: 31px;
+      height: 31px;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      background: white;
+      color: #63366e;
+      font-weight: 700;
+    }
+
+    /* CHAT */
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background:
+        radial-gradient(circle at 10% 30%, rgba(253,186,116,.07), transparent 30%),
+        #fffdf7;
+    }
+
+    .date {
+      text-align: center;
+      font-size: 11px;
+      color: #aaa;
+      margin: 4px 0 12px;
+    }
+
+    .message {
+      max-width: 78%;
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+      animation: pop .18s ease;
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(5px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .received {
+      align-self: flex-start;
+      color: #4b394d;
+      background: #eee9ec;
+      border-radius: 19px 19px 19px 5px;
+    }
+
+    .sent {
+      align-self: flex-end;
+      color: white;
+      background: linear-gradient(135deg,#7b32b2,#d72b79,#f77737);
+      border-radius: 19px 19px 5px 19px;
+      box-shadow: 0 3px 10px rgba(180,45,120,.16);
+    }
+
+    .message-time {
+      margin-top: 4px;
+      text-align: right;
+      font-size: 9px;
+      opacity: .6;
+    }
+
+    .seen {
+      align-self: flex-end;
+      margin: 0 5px 3px;
+      font-size: 10px;
+      color: #999;
+    }
+
+    .typing {
+      display: none;
+      align-self: flex-start;
+      align-items: center;
+      gap: 5px;
+      color: #999;
+      font-size: 11px;
+      margin: 3px 0 4px 7px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #aaa;
+      animation: bounce 1.1s infinite;
+    }
+
+    .dots span:nth-child(2) { animation-delay: .15s; }
+    .dots span:nth-child(3) { animation-delay: .3s; }
+
+    @keyframes bounce {
+      0%,60%,100% { transform: translateY(0); }
+      30% { transform: translateY(-4px); }
+    }
+
+    /* INPUT */
+    .input-area {
+      padding: 9px 12px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fffdf7;
+      border-top: 1px solid #eee7ea;
+    }
+
+    .input-box {
+      flex: 1;
+      min-height: 44px;
+      padding: 0 12px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg,#fff,#fff7fb);
+      border: 1px solid #e0cddd;
+    }
+
+    .input-box input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 14px;
+    }
+
+    .emoji {
+      border: 0;
+      background: transparent;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .send {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      background: linear-gradient(135deg,#7b32b2,#d72b79,#f77737);
+      box-shadow: 0 4px 12px rgba(190,40,120,.25);
+    }
+
+    /* NAV */
+    .nav {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      border-top: 1px solid #eee7ea;
+      background: #fffdf7;
+      color: #63366e;
+      font-size: 23px;
+    }
+
+    .nav-item {
+      cursor: pointer;
+      transition: transform .15s;
+    }
+
+    .nav-item.active {
+      transform: scale(1.08);
+      font-weight: 700;
+    }
+
+    @media (min-width: 600px) {
+      body { padding: 20px 0; }
+      .app {
+        height: calc(100vh - 40px);
+        border-radius: 22px;
+        box-shadow: 0 15px 45px rgba(35,0,50,.25);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">Mana</div>
+      <div class="top-icons">
+        <span>♡</span>
+        <span>✈</span>
+      </div>
+    </header>
+
+    <section class="profile-card">
+      <div class="avatar-ring">
+        <div class="avatar">👩🏻</div>
+      </div>
+
+      <div class="person">
+        <div class="person-name">Snigdha</div>
+        <div class="status online" id="status">● active now</div>
+      </div>
+
+      <button class="info">i</button>
+    </section>
+
+    <main class="chat" id="chat">
+      <div class="date">Today</div>
+
+      <div class="message received">
+        hii evaru? 😅
+        <div class="message-time">7:42 PM</div>
+      </div>
+
+      <div class="message sent">
+        hlo 😂 nenu Rahul
+        <div class="message-time">7:43 PM</div>
+      </div>
+
+      <div class="message sent">
+        nitho friendship cheddam ani msg chesa
+        <div class="message-time">7:43 PM</div>
+      </div>
+
+      <div class="seen">Seen</div>
+
+      <div class="message received">
+        haha okayy 😂 kani nannu ela telusu?
+        <div class="message-time">7:47 PM</div>
+      </div>
+
+      <div class="message sent">
+        teliyadu actually 😭 just ala msg chesa
+        <div class="message-time">7:48 PM</div>
+      </div>
+
+      <div class="typing" id="typing">
+        <span>Snigdha is typing</span>
+        <div class="dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </main>
+
+    <div class="input-area">
+      <div class="input-box">
+        <input id="messageInput" type="text" placeholder="Message Snigdha..." autocomplete="off">
+        <button class="emoji" onclick="addEmoji()">😊</button>
+      </div>
+      <button class="send" onclick="sendMessage()">➤</button>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active">⌂</div>
+      <div class="nav-item">⌕</div>
+      <div class="nav-item">＋</div>
+      <div class="nav-item">♡</div>
+      <div class="nav-item">👤</div>
+    </nav>
+
+  </div>
+
+  <script>
+    const input = document.getElementById("messageInput");
+    const chat = document.getElementById("chat");
+    const typing = document.getElementById("typing");
+
+    function nowTime() {
+      return new Date().toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      const message = document.createElement("div");
+      message.className = "message sent";
+
+      const content = document.createTextNode(text);
+      message.appendChild(content);
+
+      const time = document.createElement("div");
+      time.className = "message-time";
+      time.textContent = nowTime();
+      message.appendChild(time);
+
+      chat.insertBefore(message, typing);
+
+      input.value = "";
+      typing.style.display = "none";
+      scrollBottom();
+    }
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    input.addEventListener("input", () => {
+      typing.style.display = input.value.length ? "flex" : "none";
+    });
+
+    function addEmoji() {
+      input.value += " 😂";
+      input.focus();
+      typing.style.display = "flex";
+    }
+
+    function scrollBottom() {
+      requestAnimationFrame(() => {
+        chat.scrollTop = chat.scrollHeight;
+      });
+    }
+  </script>
+</body>
+</html>
