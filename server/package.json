@@ -1,7 +1,7 @@
-
 {
   "name": "mana-chat-server",
   "version": "1.0.0",
+  "description": "Mana Chat with Snigdha AI friend",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js"
