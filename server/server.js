@@ -24,7 +24,7 @@ const io = new Server(server, {
  */
 
 const OPENROUTER_API_KEY =
-  process.env.OPENROUTER_API_KEY || "PASTE_NEW_OPENROUTER_KEY_HERE";
+  process.env.OPENROUTER_API_KEY || "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";
 
 const OPENROUTER_URL =
   "https://openrouter.ai/api/v1/chat/completions";
