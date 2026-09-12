@@ -376,10 +376,28 @@
 
   </div>
 
+  <!-- Socket.IO client added for backend connection -->
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
   <script>
+
+    /*
+     * ==========================================
+     * SNIGDHA SERVER CONNECTION
+     * ==========================================
+     *
+     * CHANGE ONLY THIS URL.
+     */
+
+    const socket = io("https://friend-ra49.onrender.com");
+
+    socket.emit("join", "You");
+
+
     const input = document.getElementById("messageInput");
     const chat = document.getElementById("chat");
     const typing = document.getElementById("typing");
+
 
     function nowTime() {
       return new Date().toLocaleTimeString([], {
@@ -388,50 +406,227 @@
       });
     }
 
+
+    /*
+     * ==========================================
+     * SEND MESSAGE TO SNIGDHA
+     * ==========================================
+     */
+
     function sendMessage() {
+
       const text = input.value.trim();
+
       if (!text) return;
 
-      const message = document.createElement("div");
-      message.className = "message sent";
-
-      const content = document.createTextNode(text);
-      message.appendChild(content);
-
-      const time = document.createElement("div");
-      time.className = "message-time";
-      time.textContent = nowTime();
-      message.appendChild(time);
-
-      chat.insertBefore(message, typing);
+      socket.emit("message", {
+        user: "You",
+        text: text
+      });
 
       input.value = "";
+
       typing.style.display = "none";
+
       scrollBottom();
     }
 
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        sendMessage();
+
+    /*
+     * ==========================================
+     * RECEIVE MESSAGES
+     * ==========================================
+     */
+
+    socket.on("message", (data) => {
+
+      const message =
+        document.createElement("div");
+
+      if (data.user === "Snigdha") {
+
+        message.className =
+          "message received";
+
+      } else {
+
+        message.className =
+          "message sent";
+
       }
+
+
+      const content =
+        document.createTextNode(data.text);
+
+      message.appendChild(content);
+
+
+      const time =
+        document.createElement("div");
+
+      time.className =
+        "message-time";
+
+
+      if (data.time) {
+
+        time.textContent =
+          new Date(data.time)
+            .toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit"
+            });
+
+      } else {
+
+        time.textContent =
+          nowTime();
+
+      }
+
+
+      message.appendChild(time);
+
+      chat.insertBefore(
+        message,
+        typing
+      );
+
+      scrollBottom();
+
     });
+
+
+    /*
+     * ==========================================
+     * SNIGDHA TYPING INDICATOR
+     * ==========================================
+     */
+
+    socket.on("typing", (data) => {
+
+      if (data.user !== "Snigdha") {
+        return;
+      }
+
+      if (data.typing) {
+
+        typing.style.display = "flex";
+
+      } else {
+
+        typing.style.display = "none";
+
+      }
+
+      scrollBottom();
+
+    });
+
+
+    /*
+     * ==========================================
+     * CONNECTION STATUS
+     * ==========================================
+     */
+
+    socket.on("connect", () => {
+
+      const status =
+        document.getElementById("status");
+
+      status.textContent =
+        "● active now";
+
+      status.classList.add("online");
+
+    });
+
+
+    socket.on("disconnect", () => {
+
+      const status =
+        document.getElementById("status");
+
+      status.textContent =
+        "● offline";
+
+      status.classList.remove("online");
+
+    });
+
+
+    /*
+     * ==========================================
+     * ENTER TO SEND
+     * ==========================================
+     */
+
+    input.addEventListener("keydown", (event) => {
+
+      if (event.key === "Enter") {
+
+        event.preventDefault();
+
+        sendMessage();
+
+      }
+
+    });
+
+
+    /*
+     * ==========================================
+     * INPUT TYPING
+     * ==========================================
+     */
 
     input.addEventListener("input", () => {
-      typing.style.display = input.value.length ? "flex" : "none";
+
+      typing.style.display =
+        input.value.length
+          ? "flex"
+          : "none";
+
     });
 
+
+    /*
+     * ==========================================
+     * EMOJI
+     * ==========================================
+     */
+
     function addEmoji() {
+
       input.value += " 😂";
+
       input.focus();
+
       typing.style.display = "flex";
+
     }
 
+
+    /*
+     * ==========================================
+     * SCROLL
+     * ==========================================
+     */
+
     function scrollBottom() {
+
       requestAnimationFrame(() => {
-        chat.scrollTop = chat.scrollHeight;
+
+        chat.scrollTop =
+          chat.scrollHeight;
+
       });
+
     }
+
   </script>
+
 </body>
 </html>
