@@ -2,9 +2,9 @@
   "name": "mana-chat-server",
   "version": "1.0.0",
   "description": "Mana Chat with Snigdha AI friend",
-  "main": "server/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
